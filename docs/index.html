@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#103d43">
+  <meta name="description" content="再抛一竿：在夕阳湖畔蓄力抛投，操控米诺引诱翘嘴，稳住张力收获第一尾鱼。">
+  <title>再抛一竿 · 路亚试玩</title>
+  <link rel="preload" href="assets/title-original.png" as="image">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="app">
+  <section id="title-screen" aria-label="再抛一竿 游戏入口">
+    <div class="title-art">
+      <img class="title-image" src="assets/title-original.png" alt="再抛一竿：像素夕阳湖畔的钓手，水下的鱼追逐拟饵">
+      <button class="art-button art-login" id="login"><span class="sr-only">登录</span></button>
+      <button class="art-button art-register" id="register"><span class="sr-only">注册</span></button>
+      <button class="guest-button" id="play" disabled>正在准备湖畔…</button>
+      <span class="title-edition">路亚手感试玩 · 本机存档</span>
+    </div>
+    <p class="portrait-tip">横屏游玩，更能看清湖面与标点</p>
+  </section>
+
+  <section id="game-screen" hidden aria-label="路亚钓鱼游戏">
+    <header class="game-header">
+      <button id="home" class="wordmark" aria-label="返回游戏入口">再抛一竿<span>暮色湖 · 旧石桥</span></button>
+      <ol class="chapters" aria-label="游戏阶段">
+        <li data-phase="cast" class="active"><b>Ⅰ</b> 抛投</li>
+        <li data-phase="retrieve"><b>Ⅱ</b> 操饵</li>
+        <li data-phase="fight"><b>Ⅲ</b> 搏鱼</li>
+      </ol>
+      <div class="header-actions">
+        <button id="sound" aria-pressed="false" aria-label="开启声音">声音 关</button>
+        <button id="help" aria-label="查看玩法">玩法</button>
+        <button id="pause" aria-label="暂停游戏">暂停</button>
+      </div>
+    </header>
+
+    <div class="scene" id="scene">
+      <img class="scene-image" id="lake-image" src="assets/lake.png" alt="夕阳照亮旧石桥和湖面，钓手站在右侧栈桥上">
+      <img class="scene-image underwater-image" id="water-image" src="assets/underwater.png" alt="桥墩下的青绿湖水、光束和水草">
+      <canvas id="world" width="960" height="540" role="img" aria-label="实时钓鱼场景：落点、米诺泳姿与翘嘴追逐"></canvas>
+      <div class="location-tag"><span id="scene-mode">落日时分</span><strong id="scene-target">桥墩标点 · 36 m</strong></div>
+      <div class="catch-log"><span id="player-name">旅人</span><strong>本次渔获 <span id="catch-count">0</span></strong></div>
+      <div class="scene-message" id="scene-message" aria-live="polite">把第一竿，抛向桥墩旁。</div>
+      <div id="floating-feedback" aria-hidden="true"></div>
+      <div class="scene-bottom"><span id="gear-caption">轻型路亚竿 / 悬浮米诺</span><span id="distance-caption">标点距离 36.0 m</span></div>
+      <div class="paused-shade" id="paused-shade" hidden><strong>湖面，等你回来。</strong><button class="pixel-button gold" id="resume">继续这一竿</button></div>
+    </div>
+
+    <div class="game-console">
+      <div class="readouts">
+        <div class="meter-group" id="primary-meter">
+          <div class="meter-label"><span id="primary-label">抛投蓄力</span><strong id="primary-value">按住蓄力</strong></div>
+          <div class="meter-track power-track" id="primary-track"><span class="sweet-zone" id="power-zone"></span><span class="meter-fill" id="primary-fill"></span></div>
+          <span class="meter-note" id="primary-note">金色区间：约 2/3 力度</span>
+        </div>
+        <div class="meter-group" id="secondary-meter">
+          <div class="meter-label"><span id="secondary-label">落点精度</span><strong id="secondary-value">正中松手</strong></div>
+          <div class="meter-track accuracy-track" id="secondary-track"><span class="sweet-zone" id="accuracy-zone"></span><span class="accuracy-needle" id="accuracy-needle"></span><span class="meter-fill" id="secondary-fill"></span></div>
+          <span class="meter-note" id="secondary-note">指针越靠中间，落点越稳</span>
+        </div>
+      </div>
+      <div class="actions">
+        <div class="speed-control" role="group" aria-label="收线速度">
+          <button data-gear="0" aria-pressed="false">慢收<kbd>1</kbd></button>
+          <button data-gear="1" aria-pressed="true">匀速<kbd>2</kbd></button>
+          <button data-gear="2" aria-pressed="false">快收<kbd>3</kbd></button>
+        </div>
+        <div class="action-buttons">
+          <button class="pixel-button gold hold-button" id="main-action"><span id="main-label">按住蓄力</span><kbd>空格</kbd></button>
+          <button class="pixel-button jerk-button" id="jerk" disabled>抽竿<kbd>J</kbd></button>
+          <button class="reset-button" id="reset" aria-label="重开一竿">重开<kbd>R</kbd></button>
+        </div>
+      </div>
+      <div class="coach" id="coach" aria-live="polite">按住空格或「按住蓄力」，力度约 2/3、指针居中时松手。</div>
+    </div>
+  </section>
+</main>
+
+<dialog id="profile-dialog" class="pixel-dialog">
+  <button class="close-dialog" data-close="profile-dialog" aria-label="关闭">×</button>
+  <p class="dialog-kicker">再抛一竿 · 本机试玩存档</p>
+  <h2 id="profile-title">成为湖畔的新钓手</h2>
+  <p id="profile-copy">取个名字，记住你在这片湖的收获。</p>
+  <form id="profile-form">
+    <label for="nickname">钓手昵称</label>
+    <input id="nickname" name="nickname" maxlength="12" placeholder="例如：晚风钓手" autocomplete="nickname" required>
+    <p id="profile-error" role="alert"></p>
+    <button class="pixel-button gold" type="submit" id="profile-submit">建立存档，去湖边</button>
+  </form>
+  <p class="small-note">试玩存档仅保存在此浏览器，无需邮箱或密码。</p>
+</dialog>
+
+<dialog id="help-dialog" class="pixel-dialog help-dialog">
+  <button class="close-dialog" data-close="help-dialog" aria-label="关闭">×</button>
+  <p class="dialog-kicker">一根竿 · 一枚米诺 · 一尾翘嘴</p>
+  <h2>你的第一竿</h2>
+  <div class="help-step"><b>Ⅰ</b><div><h3>瞄准桥墩旁</h3><p>按住空格蓄力，力度约 2/3、精度指针靠近正中时松手。目标 36 米，落点越准，鱼的攻击欲上限越高。</p></div></div>
+  <div class="help-step"><b>Ⅱ</b><div><h3>让米诺活起来</h3><p>选择「匀速」，按住空格收线；每 2～3 秒按 J 抽竿，接着松开空格停半秒。匀收、抽停的节奏会诱发攻击。</p></div></div>
+  <div class="help-step"><b>Ⅲ</b><div><h3>稳住这一尾</h3><p>按住收线拉近鱼，张力高时松手。看见「准备冲刺」就放线，冲刺结束再收。张力爆表会切线，过松太久会脱钩。</p></div></div>
+  <p class="small-note">空格：蓄力 / 收线　 J 或 ↑：抽竿　 1 / 2 / 3：速度　 R：重开　 Esc：暂停<br>触屏：按住主按钮，点「抽竿」；切到其他窗口会自动暂停。</p>
+  <button class="pixel-button gold" data-close="help-dialog">知道了，去抛一竿</button>
+</dialog>
+
+<dialog id="result-dialog" class="pixel-dialog result-dialog">
+  <p class="dialog-kicker" id="result-kicker">暮色湖的第一份回应</p>
+  <h2 id="result-title">漂亮，上鱼了！</h2>
+  <img id="result-fish" src="assets/culter.png" alt="银色翘嘴">
+  <p id="result-species">翘嘴</p>
+  <div id="result-stats"></div>
+  <p id="result-copy"></p>
+  <button class="pixel-button gold" id="again">再抛一竿</button>
+  <button class="quiet-button" id="result-home">回到湖畔入口</button>
+</dialog>
+<script type="module" src="app.mjs"></script>
+</body>
+</html>
